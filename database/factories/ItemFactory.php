@@ -22,7 +22,13 @@ class ItemFactory extends Factory
             'category_id' => fake()->numberBetween(1, 2),
             'price' => $this->faker->randomFloat(2, 1000, 100000),
             'description' => fake()->text(),
-            'img' => fake()->imageUrl(),
+            'img' => fake()->randomElement(
+                [
+                    'https://images.unsplash.com/photo-1579584425555-c3ce17fd4351',
+                    'https://images.unsplash.com/photo-1617421753170-46511a8d73fc',
+                    'https://images.unsplash.com/photo-1742633882704-41ec3a57dbb7'
+                ]
+            ),
             'is_active' => fake()->boolean(),
         ];
     }
