@@ -8,10 +8,9 @@ Route::get('/', function () {
 });
 
 Route::get('/menu', [MenuController::class, 'index'])->name('menu');
-
-Route::get('/cart', function () {
-    return view('customer.cart');
-})->name('cart');
+Route::get('/cart', [MenuController::class, 'cart'])->name('cart');
+Route::post('/cart/add', [MenuController::class, 'addToCart'])->name('cart.add');
+Route::post('/cart/update', [MenuController::class, 'updateCart'])->name('cart.update');
 
 Route::get('/checkout', function () {
     return view('customer.checkout');

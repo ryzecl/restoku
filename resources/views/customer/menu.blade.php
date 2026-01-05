@@ -32,7 +32,7 @@
                                                 <div class="d-flex justify-content-between flex-lg-wrap">
                                                     <p class="text-dark fs-5 fw-bold mb-0">
                                                         {{ 'Rp' . number_format($item->price, 0, ',', '.') }}</p>
-                                                    <a href="#" onclick="addToCart({{ $item->id }})"
+                                                    <a href="javascript:void(0)" onclick="addToCart({{ $item->id }})"
                                                         class="btn border border-secondary rounded-pill px-3 text-primary"><i
                                                             class="fa fa-shopping-bag me-2 text-primary"></i> Tambah
                                                         Keranjang</a>
@@ -49,4 +49,28 @@
             </div>
         </div>
     </div>
+@endsection
+
+@section('script')
+    <script>
+        function addToCart(menuId) {
+            fetch("{{ route('cart.add') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({
+                        id: menuId
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.message)
+                })
+                .catch(error => {
+                    console.error('Error:', error)
+                })
+        }
+    </script>
 @endsection
