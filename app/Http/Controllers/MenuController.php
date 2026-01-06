@@ -191,6 +191,24 @@ class MenuController extends Controller
         Session::forget('cart');
         Session::forget('tableNumber');
 
-        return redirect()->route('menu')->with('success', 'Pesanan berhasil dibuat');
+        return redirect()->route('checkout.success', ['orderId' => $order->order_code])->with('success', 'Pesanan berhasil dibuat');
+    }
+
+    public function checkoutSuccess($orderId)
+    {
+        $order = Order::where('order_code', $orderId)->first();
+
+        if (!$order) {
+            return redirect()->route('menu')->with('error', 'Pesanan tidak ditemukan');
+        }
+
+        $orderItems = OrderItem::where('order_id', $order->id)->get();
+
+        if ($order->payment_method == 'qris') {
+            $order->status = 'settlement';
+            $order->save();
+        }
+
+        return view('customer.success', compact('order', 'orderItems'));
     }
 }
