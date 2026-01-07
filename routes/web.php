@@ -3,6 +3,10 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ItemController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\RoleController;
 
 Route::get('/', function () {
     return redirect()->route('menu');
@@ -21,4 +25,12 @@ Route::get('/checkout/success/{orderId}', [MenuController::class, 'checkoutSucce
 
 
 // Admin Route
+Route::get('/dashboard', function () {
+    return view('admin.dashboard');
+})->name('dashboard');
+
 Route::resource('categories', CategoryController::class);
+Route::resource('items', ItemController::class);
+Route::resource('orders', OrderController::class);
+Route::resource('users', UserController::class);
+Route::resource('roles', RoleController::class);
