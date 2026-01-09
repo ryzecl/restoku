@@ -1,102 +1,86 @@
 @extends('admin.layouts.master')
-@section('title', 'Category')
+@section('title', 'Menu')
 
 @section('css')
+    {{-- Datatable --}}
+    <link rel="stylesheet" href="{{ asset('assets/admin/extensions/simple-datatables/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/admin/compiled/css/table-datatable.css') }}">
 @endsection
 
 @section('content')
     <div class="page-heading">
-        <h3>Selamat Datang, Admin!</h3>
-    </div>
-    <div class="page-content">
-        <section class="row">
-            <div class="col-12 col-lg-12">
-                <div class="row">
-                    <div class="col-6 col-lg-3 col-md-6">
-                        <div class="card">
-                            <div class="card-body px-4 py-4-5">
-                                <div class="row">
-                                    <div class="col-md-4 col-lg-12 col-xl-12 col-xxl-5 d-flex justify-content-start ">
-                                        <div class="stats-icon purple mb-2">
-                                            <i class="iconly-boldWallet"></i>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-8 col-lg-12 col-xl-12 col-xxl-7">
-                                        <h6 class="text-muted font-semibold">Total Pesanan</h6>
-                                        <h6 class="font-extrabold mb-0">112</h6>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-6 col-lg-3 col-md-6">
-                        <div class="card">
-                            <div class="card-body px-4 py-4-5">
-                                <div class="row">
-                                    <div class="col-md-4 col-lg-12 col-xl-12 col-xxl-5 d-flex justify-content-start ">
-                                        <div class="stats-icon blue">
-                                            <i class="iconly-boldBuy"></i>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-8 col-lg-12 col-xl-12 col-xxl-7">
-                                        <h6 class="text-muted font-semibold">Pesanan Hari Ini</h6>
-                                        <h6 class="font-extrabold mb-0">183.000</h6>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-6 col-lg-3 col-md-6">
-                        <div class="card">
-                            <div class="card-body px-4 py-4-5">
-                                <div class="row">
-                                    <div class="col-md-4 col-lg-12 col-xl-12 col-xxl-5 d-flex justify-content-start ">
-                                        <div class="stats-icon green mb-2">
-                                            <i class="iconly-boldFolder"></i>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-8 col-lg-12 col-xl-12 col-xxl-7">
-                                        <h6 class="text-muted font-semibold">Jumlah Menu</h6>
-                                        <h6 class="font-extrabold mb-0">80.000</h6>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-6 col-lg-3 col-md-6">
-                        <div class="card">
-                            <div class="card-body px-4 py-4-5">
-                                <div class="row">
-                                    <div class="col-md-4 col-lg-12 col-xl-12 col-xxl-5 d-flex justify-content-start ">
-                                        <div class="stats-icon blue mb-2">
-                                            <i class="iconly-boldProfile"></i>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-8 col-lg-12 col-xl-12 col-xxl-7">
-                                        <h6 class="text-muted font-semibold">Jumlah Karyawan</h6>
-                                        <h6 class="font-extrabold mb-0">112</h6>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+        <div class="page-title">
+            <div class="row">
+                <div class="col-12 col-md-6 order-md-1 order-last">
+                    <h3>DataTable</h3>
+                    <p class="text-subtitle text-muted">Berbagai pilihan menu yang tersedia</p>
                 </div>
-                <div class="row">
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <h4>Grafik Penjualan</h4>
-                            </div>
-                            <div class="card-body">
-                                <div id="chart-profile-visit"></div>
-                            </div>
-                        </div>
-                    </div>
+                <div class="col-12 col-md-6 order-md-2 order-first">
+                    <a href="{{ route('items.create') }}" class="btn btn-primary float-start float-lg-end"><i
+                            class="bi bi-plus"></i>Tambah Menu</a>
                 </div>
             </div>
+        </div>
+        <section class="section">
+            <div class="card">
+                <div class="card-body">
+                    <table class="table table-striped" id="table1">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Gambar</th>
+                                <th>Nama Menu</th>
+                                <th>Deskripsi</th>
+                                <th>Harga</th>
+                                <th>Kategori</th>
+                                <th>Status</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($items as $item)
+                                <tr>
+                                    <td>{{ $loop->iteration }}</td>
+                                    <td>
+                                        <img src="{{ asset('img_item_upload/' . $item->img) }}" width="60"
+                                            class="img-fluid rounded-top" alt=""
+                                            onerror="this.onerror=null; this.src='{{ $item->img }}';">
+                                    </td>
+                                    <td>{{ $item->name }}</td>
+                                    <td>{{ Str::limit($item->description, 20) }}</td>
+                                    <td>{{ 'Rp' . number_format($item->price, 0, ',', '.') }}</td>
+                                    <td>
+                                        <span
+                                            class="badge {{ $item->category->cat_name == 'Makanan' ? 'bg-warning' : 'bg-info' }}">{{ $item->category->cat_name }}</span>
+                                    </td>
+                                    <td>
+                                        <span
+                                            class="badge {{ $item->is_active == 1 ? 'bg-success' : 'bg-danger' }}">{{ $item->is_active == 1 ? 'Aktif' : 'Tidak Aktif' }}</span>
+                                    </td>
+                                    <td>
+                                        <a href="{{ route('items.edit', $item->id) }}" class="btn btn-warning btn-sm"><i
+                                                class="bi bi-pencil"></i></a>
+                                        <form action="{{ route('items.destroy', $item->id) }}" method="POST"
+                                            class="d-inline">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-danger btn-sm"><i
+                                                    class="bi bi-trash"></i></button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
         </section>
     </div>
 @endsection
 
 @section('script')
+    {{-- Datatable --}}
+    <script src="{{ asset('assets/admin/extensions/simple-datatables/umd/simple-datatables.js') }}"></script>
+    <script src="{{ asset('assets/admin/static/js/pages/simple-datatables.js') }}"></script>
 @endsection
