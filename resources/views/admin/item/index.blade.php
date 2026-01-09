@@ -1,5 +1,5 @@
 @extends('admin.layouts.master')
-@section('title', 'Menu')
+@section('title', 'Daftar Menu')
 
 @section('css')
     {{-- Datatable --}}
