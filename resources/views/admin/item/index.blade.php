@@ -24,6 +24,12 @@
         <section class="section">
             <div class="card">
                 <div class="card-body">
+                    @if (session()->has('success'))
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <p><i class="bi bi-check-circle"></i> {{ session('success') }}</p>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
                     <table class="table table-striped" id="table1">
                         <thead>
                             <tr>
@@ -43,7 +49,7 @@
                                     <td>{{ $loop->iteration }}</td>
                                     <td>
                                         <img src="{{ asset('img_item_upload/' . $item->img) }}" width="60"
-                                            class="img-fluid rounded-top" alt=""
+                                            class="img-fluid rounded" alt="{{ $item->name }}"
                                             onerror="this.onerror=null; this.src='{{ $item->img }}';">
                                     </td>
                                     <td>{{ $item->name }}</td>
@@ -59,13 +65,14 @@
                                     </td>
                                     <td>
                                         <a href="{{ route('items.edit', $item->id) }}" class="btn btn-warning btn-sm"><i
-                                                class="bi bi-pencil"></i></a>
-                                        <form action="{{ route('items.destroy', $item->id) }}" method="POST"
+                                                class="bi bi-pencil me-2"></i>Ubah</a>
+                                        <form action="{{ route('items.destroy', $item->id) }}"
+                                            onclick="return confirm('Yakin ingin menghapus menu ini?')" method="POST"
                                             class="d-inline">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-danger btn-sm"><i
-                                                    class="bi bi-trash"></i></button>
+                                                    class="bi bi-trash me-2"></i>Hapus</button>
                                         </form>
                                     </td>
                                 </tr>

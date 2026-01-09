@@ -13,7 +13,17 @@
     <div class="card">
 
         <div class="card-body">
-            <form class="form" action="{{ route('items.update', $item->id) }}" enctype="multipart/form-data" method="POST">
+            @if ($errors->any())
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h5>Update Gagal!</h5>
+                    @foreach ($errors->all() as $error)
+                        <li></i> {{ $error }}</li>
+                    @endforeach
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
+            <form class="form" action="{{ route('items.update', $item->id) }}" enctype="multipart/form-data"
+                method="POST">
                 @csrf
                 @method('PUT')
                 <div class="form-body">

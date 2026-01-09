@@ -39,7 +39,7 @@ class ItemController extends Controller
                 'description' => 'required|string',
                 'price' => 'required|numeric|min:0',
                 'category_id' => 'required|exists:categories,id',
-                'img' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'img' => 'nullable|image|mimes:jpeg,png,jpg,gif|mimetypes:image/jpeg,image/png,image/gif|max:2048',
                 'is_active' => 'required|boolean',
             ],
             [
@@ -100,7 +100,7 @@ class ItemController extends Controller
                 'description' => 'required|string',
                 'price' => 'required|numeric|min:0',
                 'category_id' => 'required|exists:categories,id',
-                'img' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'img' => 'sometimes|image|mimes:jpeg,png,jpg,gif|mimetypes:image/jpeg,image/png,image/gif|max:2048',
                 'is_active' => 'required|boolean',
             ],
             [
@@ -138,6 +138,9 @@ class ItemController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $item = Item::findOrFail($id);
+        $item->delete();
+
+        return redirect()->route('items.index')->with('success', 'Menu berhasil dihapus');
     }
 }
