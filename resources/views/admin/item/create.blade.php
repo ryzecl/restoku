@@ -15,7 +15,7 @@
         <div class="card-body">
             @if ($errors->any())
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <h5>Update Gagal!</h5>
+                    <h5>Submit Gagal!</h5>
                     @foreach ($errors->all() as $error)
                         <li></i> {{ $error }}</li>
                     @endforeach
