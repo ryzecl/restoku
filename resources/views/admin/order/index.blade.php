@@ -65,7 +65,15 @@
                                             <a href="{{ route('orders.show', $order->id) }}" class="text-white"><i
                                                     class="bi bi-eye me-2"></i>Lihat</a>
                                         </span>
-
+                                        @if (Auth::user()->role->role_name == 'admin' || Auth::user()->role->role_name == 'cashier')
+                                            @if ($order->status == 'pending' && $order->payment_method == 'tunai')
+                                                <form action="{{ route('orders.settlement', $order->id) }}" method="POST">
+                                                    @csrf
+                                                    <button type="submit" class="btn btn-success btn-sm"><i
+                                                            class="bi bi-check-circle me-2"></i>Terima Pembayaran</button>
+                                                </form>
+                                            @endif
+                                        @endif
                                     </td>
                                 </tr>
                             @endforeach

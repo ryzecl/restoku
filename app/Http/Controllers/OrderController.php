@@ -22,4 +22,13 @@ class OrderController extends Controller
 
         return view('admin.order.show', compact('order', 'orderItems'));
     }
+
+    public function settlement($id)
+    {
+        $order = Order::findOrFail($id);
+        $order->update([
+            'status' => 'settlement'
+        ]);
+        return redirect()->route('orders.index')->with('success', 'Order berhasil di settlement');
+    }
 }
