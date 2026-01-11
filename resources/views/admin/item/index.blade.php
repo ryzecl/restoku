@@ -66,14 +66,31 @@
                                     <td>
                                         <a href="{{ route('items.edit', $item->id) }}" class="btn btn-warning btn-sm"><i
                                                 class="bi bi-pencil me-2"></i>Ubah</a>
-                                        <form action="{{ route('items.destroy', $item->id) }}"
+                                        @if ($item->is_active == 1)
+                                            <form action="{{ route('items.updateStatus', $item->id) }}" method="POST">
+                                                @csrf
+                                                <input type="hidden" name="is_active" value="0" />
+                                                <button type="submit" class="btn btn-danger btn-sm"
+                                                    onclick="return confirm('Yakin ingin menonaktifkan menu ini?')"><i
+                                                        class="bi bi-x me-2"></i>Nonaktifkan</button>
+                                            </form>
+                                        @else
+                                            <form action="{{ route('items.updateStatus', $item->id) }}" method="POST">
+                                                @csrf
+                                                <input type="hidden" name="is_active" value="1" />
+                                                <button type="submit" class="btn btn-success btn-sm"
+                                                    onclick="return confirm('Yakin ingin mengaktifkan menu ini?')"><i
+                                                        class="bi bi-check me-2"></i>Aktifkan</button>
+                                            </form>
+                                        @endif
+                                        {{-- <form action="{{ route('items.destroy', $item->id) }}"
                                             onclick="return confirm('Yakin ingin menghapus menu ini?')" method="POST"
                                             class="d-inline">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-danger btn-sm"><i
                                                     class="bi bi-trash me-2"></i>Hapus</button>
-                                        </form>
+                                        </form> --}}
                                     </td>
                                 </tr>
                             @endforeach
