@@ -40,7 +40,7 @@
                                 <th>Harga</th>
                                 <th>Kategori</th>
                                 <th>Status</th>
-                                <th>Aksi</th>
+                                <th colspan="2">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -65,7 +65,17 @@
                                     </td>
                                     <td>
                                         <a href="{{ route('items.edit', $item->id) }}" class="btn btn-warning btn-sm"><i
-                                                class="bi bi-pencil me-2"></i>Ubah</a>
+                                                class="bi bi-pencil"></i> Ubah</a>
+                                        {{-- <form action="{{ route('items.destroy', $item->id) }}"
+                                            onclick="return confirm('Yakin ingin menghapus menu ini?')" method="POST"
+                                            class="d-inline">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-danger btn-sm"><i
+                                                    class="bi bi-trash me-2"></i>Hapus</button>
+                                        </form> --}}
+                                    </td>
+                                    <td>
                                         @if ($item->is_active == 1)
                                             <form action="{{ route('items.updateStatus', $item->id) }}" method="POST">
                                                 @csrf
@@ -83,14 +93,6 @@
                                                         class="bi bi-check me-2"></i>Aktifkan</button>
                                             </form>
                                         @endif
-                                        {{-- <form action="{{ route('items.destroy', $item->id) }}"
-                                            onclick="return confirm('Yakin ingin menghapus menu ini?')" method="POST"
-                                            class="d-inline">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm"><i
-                                                    class="bi bi-trash me-2"></i>Hapus</button>
-                                        </form> --}}
                                     </td>
                                 </tr>
                             @endforeach
