@@ -83,6 +83,17 @@
                         <span>Manajemen Kategori</span>
                     </a>
                 </li>
+
+                <li class="sidebar-item">
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <a onclick="event.preventDefault();this.closest('form').submit();" class='sidebar-link'>
+                            <i class="bi bi-box-arrow-right"></i>
+                            <span>Logout</span>
+                        </a>
+                    </form>
+                </li>
+
             </ul>
         </div>
     </div>
