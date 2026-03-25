@@ -9,6 +9,8 @@ use App\Models\User;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\TableToken;
+use App\Enums\OrderStatus;
+use App\Services\OrderService;
 use Illuminate\Support\Facades\Validator;
 
 class MenuController extends Controller
@@ -155,7 +157,7 @@ class MenuController extends Controller
         return view('customer.checkout', compact('cart', 'tableNumber'));
     }
 
-    public function storeOrder(Request $request)
+    public function storeOrder(Request $request, OrderService $orderService)
     {
         $cart = Session::get('cart');
         $tableNumber = Session::get('tableNumber');
@@ -189,50 +191,19 @@ class MenuController extends Controller
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        $totalAmount = 0;
-        foreach ($cart as $item) {
-            $totalAmount += $item['price'] * $item['qty'];
-
-            $itemDetails[] = [
-                'id' => $item['id'],
-                'price' => (int) $item['price'] + ($item['price'] * 0.1),
-                'quantity' => $item['qty'],
-                'name' => substr($item['name'], 0, 50),
-            ];
+        try {
+            $order = $orderService->createCustomerOrder(
+                $cart, 
+                $tableNumber, 
+                $request->payment_method, 
+                $request->note, 
+                $request->only(['fullname', 'phone'])
+            );
+        } catch (\Exception $e) {
+            return redirect()->route('checkout')->with('error', 'Terjadi kesalahan sistem: ' . $e->getMessage());
         }
-
-        $user = User::firstOrCreate([
-            'fullname' => $request->input('fullname'),
-            'phone' => $request->input('phone'),
-            'role_id' => 4
-        ]);
-
-        $order = Order::create([
-            'order_code' => 'ORD-' . $tableNumber . '-' . time(),
-            'user_id' => $user->id,
-            'subtotal' => $totalAmount,
-            'tax' => $totalAmount * 0.1,
-            'grand_total' => $totalAmount + ($totalAmount * 0.1),
-            'status' => 'pending',
-            'table_number' => $tableNumber,
-            'payment_method' => $request->payment_method,
-            'note' => $request->note,
-        ]);
-
-        foreach ($cart as $itemId => $item) {
-            OrderItem::create([
-                'order_id' => $order->id,
-                'item_id' => $item['id'],
-                'quantity' => $item['qty'],
-                'price' => $item['price'] * $item['qty'],
-                'tax' => 0.1 * $item['price'] * $item['qty'],
-                'total_price' => $item['price'] * $item['qty'] + (0.1 * $item['price'] * $item['qty'])
-            ]);
-        }
-
-
+        
         Session::forget('cart');
-        Session::forget('tableNumber');
 
         if ($request->payment_method == 'tunai') {
             return redirect()->route('checkout.success', ['orderId' => $order->order_code])->with('success', 'Pesanan berhasil dibuat');
@@ -248,8 +219,8 @@ class MenuController extends Controller
                     'gross_amount' => (int) $order->grand_total,
                 ],
                 'customer_details' => [
-                    'first_name' => $user->fullname ?? 'Guest',
-                    'phone' => $user->phone,
+                    'first_name' => $order->user->fullname ?? 'Guest',
+                    'phone' => $order->user->phone,
                 ],
                 'payment_type' => 'qris',
             ];
@@ -279,7 +250,7 @@ class MenuController extends Controller
         $orderItems = OrderItem::where('order_id', $order->id)->get();
 
         if ($order->payment_method == 'qris') {
-            $order->status = 'settlement';
+            $order->status = OrderStatus::SETTLEMENT;
             $order->save();
         }
 

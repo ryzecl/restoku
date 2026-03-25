@@ -54,7 +54,7 @@
                                     <td>{{ 'Rp' . number_format($order->grand_total, 0, ',', '.') }}</td>
                                     <td>
                                         <span
-                                            class="badge {{ $order->status == 'settlement' ? 'bg-success' : ($order->status == 'pending' ? 'bg-warning' : ($order->status == 'cooked' ? 'bg-primary' : 'bg-danger')) }}">{{ $order->status }}</span>
+                                            class="badge {{ $order->status->value == 'settlement' ? 'bg-success' : ($order->status->value == 'pending' ? 'bg-warning' : ($order->status->value == 'cooked' ? 'bg-info' : ($order->status->value == 'served' ? 'bg-primary' : 'bg-danger'))) }}">{{ $order->status->value }}</span>
                                     </td>
                                     <td>{{ $order->table_number }}</td>
                                     <td>{{ $order->payment_method }}</td>
@@ -68,15 +68,28 @@
                                     </td>
                                     <td>
                                         @if (Auth::user()->role->role_name == 'admin' || Auth::user()->role->role_name == 'cashier')
-                                            @if ($order->status == 'pending' && $order->payment_method == 'tunai')
+                                            @if ($order->status->value == 'pending' && $order->payment_method == 'tunai')
                                                 <form action="{{ route('orders.updateStatus', $order->id) }}"
-                                                    method="POST">
+                                                    method="POST" class="d-inline">
                                                     @csrf
                                                     <button type="submit" class="btn btn-success btn-sm"><i
                                                             class="bi bi-check-circle me-2"></i>Terima Pembayaran</button>
                                                 </form>
+                                                <form action="{{ route('orders.cancel', $order->id) }}"
+                                                    method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin membatalkan pesanan ini?');">
+                                                    @csrf
+                                                    <button type="submit" class="btn btn-danger btn-sm"><i
+                                                            class="bi bi-x-circle me-2"></i>Batalkan</button>
+                                                </form>
+                                            @elseif ($order->status->value == 'cooked')
+                                                <form action="{{ route('orders.updateStatus', $order->id) }}"
+                                                    method="POST">
+                                                    @csrf
+                                                    <button type="submit" class="btn btn-primary btn-sm"><i
+                                                            class="bi bi-send-check me-2"></i>Sajikan Pesanan</button>
+                                                </form>
                                             @endif
-                                        @elseif (Auth::user()->role->role_name == 'chef' && $order->status == 'settlement')
+                                        @elseif (Auth::user()->role->role_name == 'chef' && $order->status->value == 'settlement')
                                             <form action="{{ route('orders.updateStatus', $order->id) }}" method="POST">
                                                 @csrf
                                                 <button type="submit" class="btn btn-success btn-sm"><i

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Http\Requests\StoreItemRequest;
+use App\Http\Requests\UpdateItemRequest;
 use App\Models\Item;
 use App\Models\Category;
 
@@ -31,32 +33,9 @@ class ItemController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreItemRequest $request)
     {
-        $validatedData = $request->validate(
-            [
-                'name' => 'required|string|max:255',
-                'description' => 'required|string',
-                'price' => 'required|numeric|min:0',
-                'category_id' => 'required|exists:categories,id',
-                'img' => 'nullable|image|mimes:jpeg,png,jpg,gif|mimetypes:image/jpeg,image/png,image/gif|max:2048',
-                'is_active' => 'required|boolean',
-            ],
-            [
-                'name.required' => 'Nama menu wajib diisi',
-                'name.max' => 'Nama menu maksimal 255 karakter',
-                'description.required' => 'Deskripsi wajib diisi',
-                'price.required' => 'Harga wajib diisi',
-                'price.min' => 'Harga minimal 0',
-                'category_id.required' => 'Kategori wajib diisi',
-                'category_id.exists' => 'Kategori tidak ditemukan',
-                'img.image' => 'Gambar harus berupa gambar',
-                'img.mimes' => 'Gambar harus berupa gambar dengan format jpeg, png, jpg, gif',
-                'img.max' => 'Gambar maksimal 2048 KB',
-                'is_active.required' => 'Status wajib diisi',
-                'is_active.boolean' => 'Status harus berupa boolean',
-            ]
-        );
+        $validatedData = $request->validated();
 
         if ($request->hasFile('img')) {
             $image = $request->file('img');
@@ -92,32 +71,9 @@ class ItemController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateItemRequest $request, string $id)
     {
-        $validatedData = $request->validate(
-            [
-                'name' => 'required|string|max:255',
-                'description' => 'required|string',
-                'price' => 'required|numeric|min:0',
-                'category_id' => 'required|exists:categories,id',
-                'img' => 'sometimes|image|mimes:jpeg,png,jpg,gif|mimetypes:image/jpeg,image/png,image/gif|max:2048',
-                'is_active' => 'required|boolean',
-            ],
-            [
-                'name.required' => 'Nama menu wajib diisi',
-                'name.max' => 'Nama menu maksimal 255 karakter',
-                'description.required' => 'Deskripsi wajib diisi',
-                'price.required' => 'Harga wajib diisi',
-                'price.min' => 'Harga minimal 0',
-                'category_id.required' => 'Kategori wajib diisi',
-                'category_id.exists' => 'Kategori tidak ditemukan',
-                'img.image' => 'Gambar harus berupa gambar',
-                'img.mimes' => 'Gambar harus berupa gambar dengan format jpeg, png, jpg, gif',
-                'img.max' => 'Gambar maksimal 2048 KB',
-                'is_active.required' => 'Status wajib diisi',
-                'is_active.boolean' => 'Status harus berupa boolean',
-            ]
-        );
+        $validatedData = $request->validated();
 
         $item = Item::findOrFail($id);
 

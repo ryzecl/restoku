@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Enums\OrderStatus;
 
 class Order extends Model
 {
@@ -18,9 +19,13 @@ class Order extends Model
         'table_number',
         'payment_method',
         'note',
-        'created_at',
-        'updated_at'
     ];
+
+    protected $casts = [
+        'status' => OrderStatus::class,
+    ];
+
+
     protected $dates = ['deleted_at'];
 
     public function user()

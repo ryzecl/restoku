@@ -6,9 +6,9 @@
     <div class="container-fluid py-5 d-flex justify-content-center">
         <div class="receipt border p-4 bg-white shadow" style="width: 450px; margin-top: 5rem;">
             <h5 class="text-center mb-2">Pesanan berhasil dibuat!</h5>
-            @if ($order->payment_method == 'tunai' && $order->status == 'pending')
+            @if ($order->payment_method == 'tunai' && $order->status->value == 'pending')
                 <p class="text-center"><span class="badge bg-danger">Menunggu Pembayaran</span></p>
-            @elseif ($order->payment_method == 'qris' && $order->status == 'pending')
+            @elseif ($order->payment_method == 'qris' && $order->status->value == 'pending')
                 <p class="text-center"><span class="badge bg-success">Menunggu konfirmasi pembayaran</span></p>
             @else
                 <p class="text-center"><span class="badge bg-success">Pembayaran berhasil, pesanan segera diproses</span></p>
@@ -46,7 +46,7 @@
             </table>
 
             @if ($order->payment_method == 'tunai')
-                <p class="small text-center">Tunjukan kode bayar ini ke kasir untuk menyelesaikan pembayaran</p>
+                <p class="small text-center">Tunjukan kode bayar ini ke kasir agar pesanan segera diproses</p>
             @elseif ($order->payment_method == 'qris')
                 <p class="small text-center">Pembayaran berhasil, pesanan segera diproses. Sabar ya!!!</p>
             @endif

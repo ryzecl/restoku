@@ -28,7 +28,7 @@
                             <p>Dibuat Pada: {{ $order->created_at->format('d M Y H:i') }}</p>
                             <p>Nama Pelanggan: {{ $order->user->fullname }}</p>
                             <p>Status: <span
-                                    class="badge {{ $order->status == 'settlement' ? 'bg-success' : ($order->status == 'pending' ? 'bg-warning' : ($order->status == 'cooked' ? 'bg-primary' : 'bg-danger')) }}">{{ $order->status }}</span>
+                                    class="badge {{ $order->status->value == 'settlement' ? 'bg-success' : ($order->status->value == 'pending' ? 'bg-warning' : ($order->status->value == 'cooked' ? 'bg-info' : ($order->status->value == 'served' ? 'bg-primary' : 'bg-danger'))) }}">{{ $order->status->value }}</span>
                             </p>
                         </div>
                         <div class="col-md-6">

@@ -7,6 +7,8 @@ use App\Models\Item;
 use App\Models\Category;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Enums\OrderStatus;
+use App\Services\OrderService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -19,7 +21,7 @@ class PosController extends Controller
         return view('admin.pos', compact('items', 'categories'));
     }
 
-    public function store(Request $request)
+    public function store(Request $request, OrderService $orderService)
     {
         $request->validate([
             'items' => 'required|array|min:1',
@@ -29,50 +31,14 @@ class PosController extends Controller
             'payment_method' => 'required|in:tunai,qris',
         ]);
 
-        DB::beginTransaction();
         try {
-            $subtotal = 0;
-            $cartItems = [];
-
-            foreach ($request->items as $cartItem) {
-                $item = Item::findOrFail($cartItem['id']);
-                $itemTotal = $item->price * $cartItem['qty'];
-                $subtotal += $itemTotal;
-
-                $cartItems[] = [
-                    'item' => $item,
-                    'qty' => $cartItem['qty'],
-                    'price' => $itemTotal,
-                ];
-            }
-
-            $tax = $subtotal * 0.1;
-            $grandTotal = $subtotal + $tax;
-
-            $order = Order::create([
-                'order_code' => 'POS-' . $request->table_number . '-' . time(),
-                'user_id' => Auth::id(),
-                'subtotal' => $subtotal,
-                'tax' => $tax,
-                'grand_total' => $grandTotal,
-                'status' => $request->payment_method === 'tunai' ? 'settlement' : 'pending',
-                'table_number' => $request->table_number,
-                'payment_method' => $request->payment_method,
-                'note' => $request->note,
-            ]);
-
-            foreach ($cartItems as $ci) {
-                OrderItem::create([
-                    'order_id' => $order->id,
-                    'item_id' => $ci['item']->id,
-                    'quantity' => $ci['qty'],
-                    'price' => $ci['price'],
-                    'tax' => $ci['price'] * 0.1,
-                    'total_price' => $ci['price'] + ($ci['price'] * 0.1),
-                ]);
-            }
-
-            DB::commit();
+            $order = $orderService->createKasirOrder(
+                $request->items, 
+                $request->table_number, 
+                $request->payment_method, 
+                $request->note, 
+                Auth::id()
+            );
 
             // ── QRIS: Generate Midtrans Snap Token ──
             if ($request->payment_method === 'qris') {
@@ -108,7 +74,6 @@ class PosController extends Controller
                 'order_code' => $order->order_code,
             ]);
         } catch (\Exception $e) {
-            DB::rollBack();
             return response()->json([
                 'success' => false,
                 'message' => 'Gagal membuat pesanan: ' . $e->getMessage(),
@@ -122,7 +87,7 @@ class PosController extends Controller
     public function updateStatus(Request $request, $orderCode)
     {
         $order = Order::where('order_code', $orderCode)->firstOrFail();
-        $order->status = 'settlement';
+        $order->status = OrderStatus::SETTLEMENT;
         $order->save();
 
         return response()->json([

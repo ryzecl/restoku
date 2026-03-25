@@ -47,6 +47,7 @@ Route::middleware('role:admin|cashier')->group(function () {
     Route::get('/pos', [PosController::class, 'index'])->name('pos');
     Route::post('/pos/store', [PosController::class, 'store'])->name('pos.store');
     Route::post('/pos/update-status/{orderCode}', [PosController::class, 'updateStatus'])->name('pos.updateStatus');
+    Route::post('/orders/{id}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
 
     // Table Token Management
     Route::get('/table-tokens', [TableTokenController::class, 'index'])->name('table-tokens.index');
