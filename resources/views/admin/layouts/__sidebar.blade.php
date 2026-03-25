@@ -50,6 +50,15 @@
                     </a>
                 </li>
 
+                @if (Auth::user()->role->role_name == 'admin' || Auth::user()->role->role_name == 'cashier')
+                    <li class="sidebar-item {{ request()->routeIs('pos') ? 'active' : '' }}">
+                        <a href="{{ route('pos') }}" class='sidebar-link'>
+                            <i class="bi bi-basket3-fill"></i>
+                            <span>Kasir (POS)</span>
+                        </a>
+                    </li>
+                @endif
+
                 <li class="sidebar-item {{ request()->routeIs('orders.*') ? 'active' : '' }} ">
                     <a href="{{ route('orders.index') }}" class='sidebar-link'>
                         <i class="bi bi-cart-fill"></i>

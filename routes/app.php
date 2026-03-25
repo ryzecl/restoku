@@ -8,6 +8,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\PosController;
 
 Route::get('/', function () {
     return redirect()->route('menu');
@@ -37,4 +38,10 @@ Route::middleware('role:admin|cashier|chef')->group(function () {
     Route::post('items/update-status/{id}', [ItemController::class, 'updateStatus'])->name('items.updateStatus');
     Route::post('orders/{id}', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+});
+
+Route::middleware('role:admin|cashier')->group(function () {
+    Route::get('/pos', [PosController::class, 'index'])->name('pos');
+    Route::post('/pos/store', [PosController::class, 'store'])->name('pos.store');
+    Route::post('/pos/update-status/{orderCode}', [PosController::class, 'updateStatus'])->name('pos.updateStatus');
 });
