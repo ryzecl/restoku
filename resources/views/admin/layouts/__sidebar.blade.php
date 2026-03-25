@@ -57,7 +57,14 @@
                             <span>Kasir (POS)</span>
                         </a>
                     </li>
+                    <li class="sidebar-item {{ request()->routeIs('table-tokens.*') ? 'active' : '' }}">
+                        <a href="{{ route('table-tokens.index') }}" class='sidebar-link'>
+                            <i class="bi bi-qr-code-scan"></i>
+                            <span>Akses Meja (QR)</span>
+                        </a>
+                    </li>
                 @endif
+
 
                 <li class="sidebar-item {{ request()->routeIs('orders.*') ? 'active' : '' }} ">
                     <a href="{{ route('orders.index') }}" class='sidebar-link'>

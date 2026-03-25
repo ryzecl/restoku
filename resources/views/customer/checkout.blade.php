@@ -14,6 +14,8 @@
             <h1 class="mb-4">Detail Pembayaran</h1>
             <form id="checkout-form" action="{{ route('checkout.store') }}" method="POST">
                 @csrf
+                <!-- Honeypot Field -->
+                <input type="text" name="website" style="display:none" value="" autocomplete="off">
                 <div class="row g-5">
                     <div class="col-md-12 col-lg-6 col-xl-6">
                         <div class="row">
@@ -123,7 +125,7 @@
 
                                     <div class="py-4 mb-4 d-flex justify-content-between">
                                         <h5 class="mb-0 ps-4 me-4">Metode Pembayaran</h5>
-                                        <div class="mb-0 pe-4 mb-3 pe-5">
+                                        <div class="pe-4 mb-3 pe-5">
                                             <div class="form-check">
                                                 <input type="radio" class="form-check-input bg-primary border-0"
                                                     id="qris" name="payment_method" value="qris">

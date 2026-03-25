@@ -8,18 +8,45 @@ use App\Models\Item;
 use App\Models\User;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\TableToken;
 use Illuminate\Support\Facades\Validator;
 
 class MenuController extends Controller
 {
+    public function scanTable($tableNumber)
+    {
+        $token = TableToken::where('table_number', $tableNumber)
+            ->where('is_active', true)
+            ->where('expires_at', '>', now())
+            ->first();
+
+        if ($token) {
+            Session::put('tableNumber', $tableNumber);
+            Session::put('tableToken', $token->token);
+            return redirect()->route('menu')->with('success', "Meja $tableNumber berhasil diakses!");
+        }
+
+        return redirect()->route('login')->with('error', "Meja $tableNumber belum dibuka oleh kasir. Silahkan panggil pelayan.");
+    }
+
     public function index(Request $request)
     {
-        $tableNumber = $request->query('meja');
-        if ($tableNumber) {
-            Session::put('tableNumber', $tableNumber);
+        // Akses menu dicek dari session yang di-set via scanTable
+        $tableNumber = Session::get('tableNumber');
+        $tokenString = Session::get('tableToken');
+
+        if (!$tableNumber || !$tokenString) {
+            return redirect()->route('login')->with('error', 'Akses menu harus melalui scan QR Code di meja yang sudah dibuka.');
         }
+
+        $token = TableToken::findValidToken($tokenString);
+        if (!$token || $token->table_number != $tableNumber) {
+            Session::forget(['tableNumber', 'tableToken']);
+            return redirect()->route('login')->with('error', 'Sesi pesanan Anda sudah berakhir. Silahkan scan QR ulang / lapor kasir.');
+        }
+
         $items = Item::where('is_active', true)->orderBy('name', 'asc')->get();
-        return view('customer.menu', compact('items', 'tableNumber'));
+        return view('customer.menu', ['items' => $items, 'tableNumber' => $tableNumber]);
     }
 
     // cart
@@ -132,9 +159,25 @@ class MenuController extends Controller
     {
         $cart = Session::get('cart');
         $tableNumber = Session::get('tableNumber');
+        $tokenString = Session::get('tableToken');
 
         if (empty($cart)) {
             return redirect()->route('cart')->with('error', 'Keranjang kosong');
+        }
+
+        // Honeypot check (Anti-spam Layer 3)
+        if ($request->filled('website')) {
+            abort(403, 'Spam detected.');
+        }
+
+        // Validasi Token
+        if (!$tableNumber || !$tokenString) {
+            return redirect()->route('menu')->with('error', 'Akses tidak valid. Silahkan scan QR ulang.');
+        }
+        
+        $token = TableToken::findValidToken($tokenString);
+        if (!$token || $token->table_number != $tableNumber) {
+            return redirect()->route('menu')->with('error', 'Sesi pesanan Anda sudah kadaluarsa. Silahkan minta QR baru ke kasir.');
         }
 
         $validator = Validator::make($request->all(), [
