@@ -30,12 +30,13 @@ Route::get('/checkout/success/{orderId}', [MenuController::class, 'checkoutSucce
 // Admin Routes
 Route::middleware('role:admin')->group(function () {
     Route::resource('categories', CategoryController::class);
-    Route::resource('items', ItemController::class);
+    Route::resource('items', ItemController::class)->except(['index']);
     Route::resource('users', UserController::class);
     Route::resource('roles', RoleController::class);
 });
 
 Route::middleware('role:admin|cashier|chef')->group(function () {
+    Route::get('items', [ItemController::class, 'index'])->name('items.index');
     Route::resource('orders', OrderController::class);
     Route::post('items/update-status/{id}', [ItemController::class, 'updateStatus'])->name('items.updateStatus');
     Route::post('orders/{id}', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');

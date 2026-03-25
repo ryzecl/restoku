@@ -15,10 +15,12 @@
                     <h3>DataTable</h3>
                     <p class="text-subtitle text-muted">Berbagai pilihan menu yang tersedia</p>
                 </div>
+                @if (Auth::user()->role->role_name == 'admin')
                 <div class="col-12 col-md-6 order-md-2 order-first">
                     <a href="{{ route('items.create') }}" class="btn btn-primary float-start float-lg-end"><i
                             class="bi bi-plus"></i>Tambah Menu</a>
                 </div>
+                @endif
             </div>
         </div>
         <section class="section">
@@ -40,7 +42,11 @@
                                 <th>Harga</th>
                                 <th>Kategori</th>
                                 <th>Status</th>
+                                @if (Auth::user()->role->role_name == 'admin')
                                 <th colspan="2">Aksi</th>
+                                @else
+                                <th>Aksi (Ubah Status)</th>
+                                @endif
                             </tr>
                         </thead>
                         <tbody>
@@ -63,6 +69,7 @@
                                         <span
                                             class="badge {{ $item->is_active == 1 ? 'bg-success' : 'bg-danger' }}">{{ $item->is_active == 1 ? 'Aktif' : 'Tidak Aktif' }}</span>
                                     </td>
+                                    @if (Auth::user()->role->role_name == 'admin')
                                     <td>
                                         <a href="{{ route('items.edit', $item->id) }}" class="btn btn-warning btn-sm"><i
                                                 class="bi bi-pencil"></i> Ubah</a>
@@ -75,6 +82,7 @@
                                                     class="bi bi-trash me-2"></i>Hapus</button>
                                         </form> --}}
                                     </td>
+                                    @endif
                                     <td>
                                         @if ($item->is_active == 1)
                                             <form action="{{ route('items.updateStatus', $item->id) }}" method="POST">
