@@ -125,7 +125,7 @@
 
                                     <div class="py-4 mb-4 d-flex justify-content-between">
                                         <h5 class="mb-0 ps-4 me-4">Metode Pembayaran</h5>
-                                        <div class="pe-4 mb-3 pe-5">
+                                        <div class="mb-3 pe-5">
                                             <div class="form-check">
                                                 <input type="radio" class="form-check-input bg-primary border-0"
                                                     id="qris" name="payment_method" value="qris">
