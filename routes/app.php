@@ -10,10 +10,13 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PosController;
 use App\Http\Controllers\TableTokenController;
+use App\Http\Controllers\PaymentCallbackController;
 
 Route::get('/', function () {
     return redirect()->route('menu');
 });
+
+Route::post('/midtrans/callback', [PaymentCallbackController::class, 'receive']);
 
 Route::get('/scan/{meja}', [MenuController::class, 'scanTable'])->name('scan.table');
 Route::get('/menu', [MenuController::class, 'index'])->name('menu');

@@ -176,7 +176,7 @@ class MenuController extends Controller
         if (!$tableNumber || !$tokenString) {
             return redirect()->route('menu')->with('error', 'Akses tidak valid. Silahkan scan QR ulang.');
         }
-        
+
         $token = TableToken::findValidToken($tokenString);
         if (!$token || $token->table_number != $tableNumber) {
             return redirect()->route('menu')->with('error', 'Sesi pesanan Anda sudah kadaluarsa. Silahkan minta QR baru ke kasir.');
@@ -193,16 +193,16 @@ class MenuController extends Controller
 
         try {
             $order = $orderService->createCustomerOrder(
-                $cart, 
-                $tableNumber, 
-                $request->payment_method, 
-                $request->note, 
+                $cart,
+                $tableNumber,
+                $request->payment_method,
+                $request->note,
                 $request->only(['fullname', 'phone'])
             );
         } catch (\Exception $e) {
             return redirect()->route('checkout')->with('error', 'Terjadi kesalahan sistem: ' . $e->getMessage());
         }
-        
+
         Session::forget('cart');
 
         if ($request->payment_method == 'tunai') {
@@ -249,10 +249,10 @@ class MenuController extends Controller
 
         $orderItems = OrderItem::where('order_id', $order->id)->get();
 
-        if ($order->payment_method == 'qris') {
-            $order->status = OrderStatus::SETTLEMENT;
-            $order->save();
-        }
+        // if ($order->payment_method == 'qris') {
+        //     $order->status = OrderStatus::SETTLEMENT;
+        //     $order->save();
+        // }
 
         return view('customer.success', compact('order', 'orderItems'));
     }

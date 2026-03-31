@@ -30,6 +30,29 @@
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
                     @endif
+
+                    <form action="{{ route('orders.index') }}" method="GET" class="mb-4">
+                        <div class="row g-3 align-items-end">
+                            <div class="col-md-4">
+                                <label for="payment_method" class="form-label">Metode Pembayaran</label>
+                                <select name="payment_method" id="payment_method" class="form-select">
+                                    <option value="">Semua Metode</option>
+                                    <option value="tunai" {{ request('payment_method') == 'tunai' ? 'selected' : '' }}>Tunai / Cash</option>
+                                    <option value="qris" {{ request('payment_method') == 'qris' ? 'selected' : '' }}>QRIS</option>
+                                    <option value="transfer" {{ request('payment_method') == 'transfer' ? 'selected' : '' }}>Transfer</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="tanggal_pesanan" class="form-label">Tanggal Pesanan</label>
+                                <input type="date" name="tanggal_pesanan" id="tanggal_pesanan" class="form-control" value="{{ request('tanggal_pesanan') }}">
+                            </div>
+                            <div class="col-md-4">
+                                <button type="submit" class="btn btn-primary me-2"><i class="bi bi-filter"></i> Filter</button>
+                                <a href="{{ route('orders.index') }}" class="btn btn-secondary"><i class="bi bi-arrow-clockwise"></i> Reset</a>
+                            </div>
+                        </div>
+                    </form>
+
                     <table class="table table-striped" id="table1">
                         <thead>
                             <tr>

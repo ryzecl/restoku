@@ -10,9 +10,19 @@ use App\Enums\OrderStatus;
 
 class OrderController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $orders = Order::all()->sortByDesc('created_at');
+        $query = Order::query();
+
+        if ($request->filled('payment_method')) {
+            $query->where('payment_method', $request->payment_method);
+        }
+
+        if ($request->filled('tanggal_pesanan')) {
+            $query->whereDate('created_at', $request->tanggal_pesanan);
+        }
+
+        $orders = $query->orderByDesc('created_at')->get();
 
         return view('admin.order.index', compact('orders'));
     }
